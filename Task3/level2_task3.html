@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>To-Do App</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #646464;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 20px auto;
+      padding: 20px;
+      background-color: #f5b9b9;
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+
+    form {
+      display: flex;
+      margin-bottom: 20px;
+    }
+
+    input[type="text"] {
+      flex-grow: 1;
+      padding: 10px;
+      font-size: 16px;
+      border-radius: 3px 0 0 3px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      padding: 10px 15px;
+      font-size: 16px;
+      background-color: #4caf50;
+      border: none;
+      color: #fff;
+      border-radius: 0 3px 3px 0;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #179ddb;
+    }
+
+    .lists-container {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .pending-tasks,
+    .completed-tasks {
+      flex-basis: 48%;
+      background-color: #80f4f4;
+      padding: 10px;
+      border-radius: 5px;
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+      text-align: center;
+      color: #333;
+    }
+
+    ul {
+      list-style-type: none;
+      padding: 0;
+    }
+
+    li {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px;
+      border-bottom: 1px solid #ccc;
+    }
+
+    .completed {
+      text-decoration: line-through;
+      color: #999;
+    }
+
+    button.delete {
+      background: none;
+      border: none;
+      color: red;
+      cursor: pointer;
+    }
+
+    button.delete:hover {
+      font-weight: bold;
+    }
+
+    .timestamp {
+      color: #999;
+      font-size: 12px;
+      margin-left: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1><strong>To-Do App</strong></h1>
+    <form id="task-form">
+      <input type="text" id="task-input" placeholder="Add a task...">
+      <button type="submit">Add Task</button>
+    </form>
+    <div class="lists-container">
+      <div class="pending-tasks">
+        <h2>Pending Tasks</h2>
+        <ul id="pending-tasks-list"></ul>
+      </div>
+      <div class="completed-tasks">
+        <h2>Completed Tasks</h2>
+        <ul id="completed-tasks-list"></ul>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Get the task form and the lists
+    const taskForm = document.getElementById('task-form');
+    const pendingTasksList = document.getElementById('pending-tasks-list');
+    const completedTasksList = document.getElementById('completed-tasks-list');
+
+    // Function to create a new task item
+    function createTaskItem(task, timestamp) {
+      const li = document.createElement('li');
+      const taskText = document.createElement('span');
+      taskText.innerText = task;
+
+      const timestampText = document.createElement('span');
+      timestampText.innerText = timestamp;
+      timestampText.classList.add('timestamp');
+
+      const deleteButton = document.createElement('button');
+      deleteButton.innerText = 'Delete';
+      deleteButton.className = 'delete';
+      deleteButton.addEventListener('click', function () {
+        li.remove();
+      });
+
+      li.appendChild(taskText);
+      li.appendChild(timestampText);
+      li.appendChild(deleteButton);
+
+      return li;
+    }
+
+    // Function to add a new task
+    function addTask(event) {
+      event.preventDefault();
+
+      const taskInput = document.getElementById('task-input');
+      const task = taskInput.value.trim();
+      const timestamp = new Date().toLocaleString();
+
+      if (task !== '') {
+        const li = createTaskItem(task, timestamp);
+        pendingTasksList.appendChild(li);
+        taskInput.value = '';
+      }
+    }
+
+    // Function to mark a task as complete
+    function markTaskComplete(event) {
+      const li = event.target.closest('li');
+      const taskText = li.querySelector('span');
+      const timestampText = li.querySelector('.timestamp');
+
+      if (!li.classList.contains('completed')) {
+        li.classList.add('completed');
+        taskText.classList.add('completed');
+        timestampText.classList.add('completed');
+        completedTasksList.appendChild(li);
+      } else {
+        li.classList.remove('completed');
+        taskText.classList.remove('completed');
+        timestampText.classList.remove('completed');
+        pendingTasksList.appendChild(li);
+      }
+    }
+
+    // Add event listeners
+    taskForm.addEventListener('submit', addTask);
+    pendingTasksList.addEventListener('click', markTaskComplete);
+    completedTasksList.addEventListener('click', markTaskComplete);
+  </script>
+</body>
+</html>
